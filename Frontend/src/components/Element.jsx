@@ -1,10 +1,14 @@
 import * as React from "react";
 import { Link } from "react-router-dom";
+import { useParams } from "react-router-dom";
 
 export default function Element(props) {
   const detail = props.details_button ? true : false;
   //change the element_title to the correct attribute name of the element object you receive from the API
   const element_title = props.element.name;
+  // const { element_id } = useParams();
+
+  // console.log(element_id)
 
   const listProperties = () => {
     return Object.keys(props.element).map((key) => {
@@ -32,7 +36,6 @@ export default function Element(props) {
             <Link
               className="button is-link is-light"
               to={
-                props.urls.app_home_url +
                 props.urls.app_list_url +
                 "/" +
                 props.element.id
@@ -51,7 +54,7 @@ export default function Element(props) {
           <Link
             className="button is-light is-success"
             to={
-              props.urls.app_edit_url +
+              props.urls.app_list_url + props.urls.app_edit_url +
               "/" +
               props.element.id
             }
@@ -61,10 +64,7 @@ export default function Element(props) {
           <button
             className="button is-danger is-light"
             onClick={() =>
-              props.deleteDataAPI(
-                props.urls.api_base_url + props.urls.api_element_list_url,
-                props.element.id
-              )
+              props.deleteDataAPI(props.urls.api_base_url + props.urls.api_element_list_url + "/" + props.element.id)
             }
           >
             Delete ❌

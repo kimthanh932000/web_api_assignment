@@ -9,13 +9,14 @@ export default function Form(props) {
   const navigate = useNavigate();
   const element = props.element
   const element_id = props.element_id
+  console.log(element)
 
   //SCHEMA FOR VALIDATION OF THE FORM -> CHANGE THIS FOR YOUR OWN FORM
   const schema = yup
     .object({
       name: yup.string().required(),
       description: yup.string().required(),
-      element_type: yup.mixed().oneOf(["A", "B", "C", "D"]),
+      elementType: yup.string().required(),
     })
     .required();
 
@@ -65,7 +66,8 @@ export default function Form(props) {
         "POST"
       );
     }
-    navigate(props.urls.app_home_url + props.urls.app_list_url);
+    // console.log(props.urls.app_home_url + props.urls.app_list_url)
+    navigate(props.urls.app_list_url);
   };
   //console.log(errors);
   return (
@@ -102,10 +104,10 @@ export default function Form(props) {
                 className="input"
                 type="text"
                 placeholder="type"
-                {...register("element_type")}
+                {...register("elementType")}
               />
             </div>
-            <p className="help is-danger">{errors.element_type?.message}</p>
+            <p className="help is-danger">{errors.elementType?.message}</p>
           </div>
           <div className="buttons">
             <Link

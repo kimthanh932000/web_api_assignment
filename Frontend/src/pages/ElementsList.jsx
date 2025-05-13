@@ -16,7 +16,7 @@ export default function ElementList(props) {
       return (
         <Element
           key={element.id}
-          details_button={true}
+          details_button={false}
           element={element}
           deleteDataAPI={props.deleteDataAPI}
           urls = {props.urls}

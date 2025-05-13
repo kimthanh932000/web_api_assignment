@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 export default function SharedLayout(props) {
   return (
     <React.Fragment>
-      <h2 className="mt-4">React CRUD API Client App</h2>
+      {/* <h2 className="mt-4">React CRUD API Client App</h2> */}
       <p>This is a simple React App for:</p>
       <ul>
         <li>Creating</li>

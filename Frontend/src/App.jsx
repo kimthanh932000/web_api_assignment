@@ -20,7 +20,9 @@ function App() {
 
   const urls = {
     api_base_url: process.env.REACT_APP_API_GATEWAY,
-    api_element_list_url: "/elements",
+    api_element_list_url: "/Elements",
+    api_element_delete_url: "/Elements/{id}",
+    api_element_details_url: "/Elements",
     // api_get_post_element_list_url: "http://127.0.0.1:8000/api/elements",
     // app_home_url: "/app/react",
     app_home_url: "/",
@@ -60,8 +62,9 @@ function App() {
   };
 
   const deleteDataAPI = (url, id) => {
+    console.log(url)
     setLoading(true);
-    fetch(url + "/" + id, {
+    fetch(url, {
       method: "DELETE",
     })
       .then((response) => {
@@ -69,12 +72,13 @@ function App() {
           console.log(response.json());
           throw Error(response.statusText);
         } else {
-          setElements((prevElements) => {
-            const newElements = prevElements.filter((item) => item.id !== id);
-            console.log("Deleted element with id " + id);
-            setLoading(false);
-            return newElements;
-          });
+          // setElements((prevElements) => {
+          //   const newElements = prevElements.filter((item) => item.id !== id);
+          //   console.log("Deleted element with id " + id);
+          //   setLoading(false);
+          //   return newElements;
+          // });
+          getDataAPI(urls.api_base_url +  urls.api_element_list_url);
         }
         //return response.json();
       })
@@ -134,18 +138,44 @@ function App() {
       .catch((err) => console.log(err.message));
   };
 
-  const findElement = (data, id) => {
-    console.log("Searching for element with id: " + id);
-    const el = data.filter((element) => element.id === parseInt(id))[0];
-    if (el) {
-      console.log("Found element:\n");
-      console.log(el);
-      return el;
-    } else {
-      console.log("Element not found!");
-      return false;
-    }
+  const findElement = (url, id) => {
+    setLoading(true);
+    console.log("Fetching data from: " + url + "/" + id);
+    fetch(`${url}/${id}`)
+      .then((response) => {
+        if (!response.ok) {
+          console.log("Response: " + response.json());
+          throw Error(response.statusText);
+        }
+        setLoading(false);
+        // console.log(response.json())
+        return response.json();
+      })
+      .then((data) => {
+        console.log(data)
+        return data;
+        // console.log("Successfully fetched data from: " + url);
+        // setElements(data);
+        // return response.json();
+        // setLoading(false);
+      })
+      .catch((err) => {
+        console.log(err.message);
+      });
   };
+
+  // const findElement = (data, id) => {
+  //   console.log("Searching for element with id: " + id);
+  //   const el = data.filter((element) => element.id === parseInt(id))[0];
+  //   if (el) {
+  //     console.log("Found element:\n");
+  //     console.log(el);
+  //     return el;
+  //   } else {
+  //     console.log("Element not found!");
+  //     return false;
+  //   }
+  // };
 
   return (
     <React.Fragment>
@@ -183,12 +213,12 @@ function App() {
             }
           />
           <Route
-            path={urls.app_home_url + urls.app_edit_url + urls.app_element_id_url}
+            path={urls.app_list_url + urls.app_edit_url + urls.app_element_id_url}
             element={
               <ElementEdit
                 title={titles.app_edit_title}
                 data={elements}
-                findElement={findElement}
+                // findElement={findElement}
                 updateDataAPI={updateDataAPI}
                 urls={urls}
               />
