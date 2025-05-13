@@ -20,49 +20,95 @@ namespace API.Controllers.Base
         [HttpGet]
         public async Task<ActionResult<IEnumerable<T>>> GetAllAsync()
         {
-            var entities = await _service.GetAllAsync();
-            return Ok(entities);
+            try
+            {
+                var entities = await _service.GetAllAsync();
+                return Ok(entities);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex);
+            }
         }
 
         // GET: api/[controller]/{id}
         [HttpGet("{id}")]
         public async Task<ActionResult<T>> GetByIdAsync(int id)
         {
-            var entity = await _service.GetByIdAsync(id);
-            return entity == null ? NotFound() : Ok(entity);
+            try
+            {
+                var entity = await _service.GetByIdAsync(id);
+                return entity == null ? NoContent() : entity;
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex);
+            }
         }
 
         // POST: api/[controller]
         [HttpPost]
-        public async Task<ActionResult<T>> Post([FromBody] T entity)
+        public async Task<ActionResult> AddAsync([FromBody] T entity)
         {
-            await _service.AddAsync(entity);
-            return CreatedAtAction("Get", new { id = entity.Id }, entity);
+            if (!ModelState.IsValid)
+            {
+                return ValidationProblem(ModelState);
+            }
+            try
+            {
+                await _service.AddAsync(entity);
+            }
+            catch (Exception ex) {
+                return BadRequest(ex);
+            }
+            return Ok(entity);
+            //return CreatedAtAction("GetByIdAsync", new { id = entity.Id }, entity);
         }
 
         // PUT: api/[controller]/{id}
         [HttpPut("{id}")]
-        public async Task<IActionResult> Put(int id, [FromBody] T entity)
+        public async Task<ActionResult<T>> UpdateAsync(int id, [FromBody] T entity)
         {
             if (id != entity.Id)
             {
                 return BadRequest();
             }
-            await _service.UpdateAsync(entity);
-            return NoContent();
+
+            if (!ModelState.IsValid)
+            {
+                return ValidationProblem(ModelState);
+            }
+            
+            try
+            {
+                await _service.UpdateAsync(entity);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex);
+            }
+
+            return Ok(entity);
         }
 
         // DELETE: api/[controller]/{id}
         [HttpDelete("{id}")]
-        public virtual async Task<IActionResult> Delete(int id)
+        public async Task<IActionResult> DeleteAsync(int id, T entity)
         {
-            var entity = await _service.GetByIdAsync(id);
-            if (entity == null)
+            if (id != entity.Id)
             {
-                return NotFound();
+                return BadRequest();
             }
-            await _service.DeleteAsync(entity);
-            return NoContent();
+
+            try
+            {
+                await _service.DeleteAsync(entity);
+            } 
+            catch (Exception ex)
+            {
+                return BadRequest(ex);
+            }
+            return Ok();
         }
     }
 }

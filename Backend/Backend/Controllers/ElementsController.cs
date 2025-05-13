@@ -8,9 +8,9 @@ namespace API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class ElementController : BaseCRUDController<Element>
+    public class ElementsController : BaseCRUDController<Element>
     {
-        public ElementController(IServiceBase<Element> service) : base(service)
+        public ElementsController(IServiceBase<Element> service) : base(service)
         {
         }
     }

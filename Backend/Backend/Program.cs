@@ -1,7 +1,10 @@
 
 using Microsoft.EntityFrameworkCore;
+using Models.Entities;
 using Services.Data;
+using Services.Data.Initialization;
 using Services.Services;
+using Services.Services.Base;
 using Services.Services.Interfaces;
 
 namespace Backend
@@ -21,6 +24,7 @@ namespace Backend
 
             // Register all services
             builder.Services.AddScoped<IElementService, ElementService>();
+            builder.Services.AddScoped<IServiceBase<Element>, ServiceBase<Element>>();
 
             // CORS config
             builder.Services.AddCors(options =>
@@ -46,6 +50,10 @@ namespace Backend
             {
                 app.UseSwagger();
                 app.UseSwaggerUI();
+
+                using var scope = app.Services.CreateScope();
+                var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+                SampleDataInitializer.SeedData(context);
             }
 
             app.UseHttpsRedirection();
