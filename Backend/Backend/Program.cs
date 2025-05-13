@@ -58,6 +58,9 @@ namespace Backend
 
             app.UseHttpsRedirection();
 
+            // Apply the CORS policy
+            app.UseCors("AllowAll");
+
             app.UseAuthorization();
 
 

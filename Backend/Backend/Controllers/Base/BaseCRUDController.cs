@@ -93,16 +93,16 @@ namespace API.Controllers.Base
 
         // DELETE: api/[controller]/{id}
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteAsync(int id, T entity)
+        public async Task<IActionResult> DeleteAsync(int id)
         {
-            if (id != entity.Id)
-            {
-                return BadRequest();
-            }
+            //if (id != entity.Id)
+            //{
+            //    return BadRequest();
+            //}
 
             try
             {
-                await _service.DeleteAsync(entity);
+                await _service.DeleteAsync(id);
             } 
             catch (Exception ex)
             {

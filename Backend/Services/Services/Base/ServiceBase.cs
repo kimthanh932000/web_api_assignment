@@ -22,10 +22,14 @@ namespace Services.Services.Base
             await _context.SaveChangesAsync();
         }
 
-        public async Task DeleteAsync(T entity)
+        public async Task DeleteAsync(int id)
         {
-            _dbSet.Remove(entity);
-            await _context.SaveChangesAsync();
+            var entity = await _dbSet.FindAsync(id);
+            if (entity != null)
+            {
+                _dbSet.Remove(entity);
+                await _context.SaveChangesAsync();
+            }
         }
 
         public async Task<IEnumerable<T>> GetAllAsync()
