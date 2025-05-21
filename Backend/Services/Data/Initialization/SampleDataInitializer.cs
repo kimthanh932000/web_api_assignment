@@ -1,10 +1,11 @@
-﻿using Models.Entities;
+﻿using Microsoft.AspNetCore.Identity;
+using Models.Entities;
 
 namespace Services.Data.Initialization
 {
     public static class SampleDataInitializer
     {
-        public static void SeedData(ApplicationDbContext context)
+        public static async Task SeedData(ApplicationDbContext context, RoleManager<IdentityRole> roleManager)
         {
             if (!context.Elements.Any())
             {
@@ -23,8 +24,17 @@ namespace Services.Data.Initialization
                 };
 
                 context.Elements.AddRange(elements);
-                context.SaveChanges();
+                await context.SaveChangesAsync();
             }
+
+            if (!roleManager.Roles.Any())
+            {
+                // Seed roles
+                foreach (var role in SampleData.Roles)
+                {
+                    await roleManager.CreateAsync(new IdentityRole(role));
+                }
+            }           
         }
     }
 }

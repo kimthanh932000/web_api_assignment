@@ -1,4 +1,5 @@
-﻿using Models.Entities;
+﻿using Microsoft.AspNetCore.Identity;
+using Models.Entities;
 
 namespace Services.Data.Initialization
 {
@@ -16,6 +17,12 @@ namespace Services.Data.Initialization
             new Element { Name = "Silicon", Description = "Used in electronics", ElementType = "Metalloid" },
             new Element { Name = "Chlorine", Description = "Used in disinfectants", ElementType = "Gas" },
             new Element { Name = "Aluminium", Description = "Lightweight metal", ElementType = "Metal" }
+        };
+
+        public static List<string> Roles = new()
+        {
+            "Admin",
+            "User"
         };
     }
 }
