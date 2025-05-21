@@ -79,35 +79,62 @@ namespace API.Controllers
         [HttpPost("login")]
         public async Task<ActionResult<ApiResponse<UserDto>>> Login([FromBody] LoginRequestDto request)
         {
-            // Check if email exists
-            var user = await _userManager.FindByEmailAsync(request.Email);
-
-            if (user == null)
+            try
             {
-                return Unauthorized(ApiResponse<object>.FailedResponse(
-                    new List<string> { "Invalid credentials" },
-                    "Login failed"
-                ));
-            }
+                // Check if email exists
+                var user = await _userManager.FindByEmailAsync(request.Email);
 
-            // Check if password match
-            var result = await _signInManager.CheckPasswordSignInAsync(user, request.Password, lockoutOnFailure: false);
+                if (user == null)
+                {
+                    return Unauthorized(ApiResponse<object>.FailedResponse(
+                        new List<string> { "Invalid credentials" },
+                        "Login failed"
+                    ));
+                }
 
-            if (!result.Succeeded)
+                // Check if password match
+                var result = await _signInManager.PasswordSignInAsync(user, request.Password, isPersistent: true, lockoutOnFailure: false);
+
+                if (!result.Succeeded)
+                {
+                    return Unauthorized(ApiResponse<object>.FailedResponse(
+                        new List<string> { "Invalid credentials." },
+                        "Login failed"
+                    ));
+                }
+
+                // Get user roles
+                var roles = await _userManager.GetRolesAsync(user);
+
+                var userDto = user.ToUserDto(roles);
+
+                return Ok(ApiResponse<UserDto>.SuccessResponse(userDto, "Login successful"));
+            } 
+            catch (Exception ex)
             {
-                return Unauthorized(ApiResponse<object>.FailedResponse(
-                    new List<string> { "Invalid credentials." },
-                    "Login failed"
-                ));
+                return BadRequest(ApiResponse<UserDto>.FailedResponse(
+                            new List<string> { ex.Message },
+                            "An error has occurred"
+                        ));
             }
-
-            // Get user roles
-            var roles = await _userManager.GetRolesAsync(user);
-
-            var userDto = user.ToUserDto(roles);
-
-            return Ok(ApiResponse<UserDto>.SuccessResponse(userDto, "Login successful"));
+            
         }
 
+        [HttpPost("logout")]
+        public async Task<IActionResult> Logout()
+        {
+            try
+            {
+                await _signInManager.SignOutAsync();
+                return Ok(ApiResponse<object>.SuccessResponse(null, "Logout successful"));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ApiResponse<UserDto>.FailedResponse(
+                            new List<string> { ex.Message },
+                            "An error has occurred"
+                        ));
+            }
+        }
     }
 }

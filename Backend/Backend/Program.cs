@@ -1,4 +1,5 @@
 
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Models.Entities;
@@ -40,6 +41,16 @@ namespace Backend
             builder.Services.AddScoped<IElementService, ElementService>();
             builder.Services.AddScoped<IServiceBase<Element>, ServiceBase<Element>>();
 
+            // Add authentication
+            builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+                .AddCookie(options =>
+                {
+                    options.Cookie.HttpOnly = true;
+                    options.Cookie.SameSite = SameSiteMode.Lax; // or None for cross-site
+                    options.Cookie.SecurePolicy = CookieSecurePolicy.Always; // use HTTPS
+                    options.ExpireTimeSpan = TimeSpan.FromHours(1);
+                });
+
             // CORS config
             builder.Services.AddCors(options =>
             {
@@ -76,6 +87,7 @@ namespace Backend
             // Apply the CORS policy
             app.UseCors("AllowAll");
 
+            app.UseAuthentication();
             app.UseAuthorization();
 
 

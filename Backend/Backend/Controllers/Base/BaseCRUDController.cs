@@ -1,10 +1,12 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Models.Entities.Base;
 using Services.Services.Interfaces;
 
 namespace API.Controllers.Base
 {
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class BaseCRUDController<T> : ControllerBase where T : BaseEntity
@@ -62,7 +64,6 @@ namespace API.Controllers.Base
                 return BadRequest(ex);
             }
             return Ok(entity);
-            //return CreatedAtAction("GetByIdAsync", new { id = entity.Id }, entity);
         }
 
         // PUT: api/[controller]/{id}
@@ -95,11 +96,6 @@ namespace API.Controllers.Base
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteAsync(int id)
         {
-            //if (id != entity.Id)
-            //{
-            //    return BadRequest();
-            //}
-
             try
             {
                 await _service.DeleteAsync(id);

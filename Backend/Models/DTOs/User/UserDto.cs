@@ -1,6 +1,4 @@
-﻿using Models.Entities.Base;
-
-namespace Models.DTOs.User
+﻿namespace Models.DTOs.User
 {
     public class UserDto
     {
