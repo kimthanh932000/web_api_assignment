@@ -1,4 +1,4 @@
-﻿namespace API
+﻿namespace API.Wrappers
 {
     public class ApiResponse<T>
     {
